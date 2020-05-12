@@ -6,8 +6,9 @@ d3.csv(url)
 
 		//add a sort dropdown button
 		let dropdownButton = d3.select('body')
+			.select('.buttonLine')
 			.append('select')
-			.attr('class','buttons');
+			.attr('class','selected');
 
 		//define sort types
 		let options = ['A-Z', 'High-Low', 'Low-High']
@@ -30,34 +31,34 @@ d3.csv(url)
 		let moving = false;
 		let buttonData = ['play']
 
-		//add a play button
-		let playbutton = d3.select('body')
-			.append('g')
-			.attr('class','buttons');
-
-		//set up play button
-		playbutton
-			.selectAll('.play')
-			.data(buttonData)
-			.enter()
-			.append('button')
-			.attr('transform', 'translate(200,0)')
-			.attr('type', 'button')
-			.attr('name', 'button')
-			.attr('value', 'Play')
-			.text('Play')
-			.on("click", function() {
-				var button = d3.select(this);
-				if (button.text() == "Pause") {
-					// moving = false;
-					// clearInterval(timer);
-					button.text("Play");
-				} else {
-					// moving = true;
-					// timer = setInterval(step, 100);
-					button.text("Pause");
-				}
-			});
+		// //add a play button
+		// let playbutton = d3.select('body')
+		// 	.append('g')
+		// 	.attr('class','buttons');
+		//
+		// //set up play button
+		// playbutton
+		// 	.selectAll('.play')
+		// 	.data(buttonData)
+		// 	.enter()
+		// 	.append('button')
+		// 	.attr('transform', 'translate(200,0)')
+		// 	.attr('type', 'button')
+		// 	.attr('name', 'button')
+		// 	.attr('value', 'Play')
+		// 	.text('Play')
+		// 	.on("click", function() {
+		// 		var button = d3.select(this);
+		// 		if (button.text() == "Pause") {
+		// 			// moving = false;
+		// 			// clearInterval(timer);
+		// 			button.text("Play");
+		// 		} else {
+		// 			// moving = true;
+		// 			// timer = setInterval(step, 100);
+		// 			button.text("Pause");
+		// 		}
+		// 	});
 
 		//add svg
 		let svg = d3.select('body').append('svg');
