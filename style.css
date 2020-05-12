@@ -29,3 +29,12 @@ p{
 .highlight{
   text-decoration: underline;
 }
+
+.buttons{
+  margin-left: 10vmin;
+  border:0.1em solid black;
+  background-color: white;
+  padding: 5px 20px;
+  text-align: center;
+  border-radius:1.5em;
+}
