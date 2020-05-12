@@ -6,13 +6,11 @@ d3.csv(url)
 
 		//add a sort dropdown button
 		let dropdownButton = d3.select('body')
-			.select('.buttonLine')
 			.append('select')
 			.attr('class','buttons');
 
-
 		//define sort types
-		let options = ['A-Z', 'high-low', 'low-high']
+		let options = ['A-Z', 'High-Low', 'Low-High']
 
 		// add the options to the button
 		dropdownButton
@@ -28,40 +26,38 @@ d3.csv(url)
 				return d;
 			})
 
-		// //define the information related to play button
-		// let moving = false;
-		// let buttonData = ['play']
-		//
-		// //add a play button
-		// let playbutton = d3.select('body')
-		// 	// .append('g')
-		// 	// .attr('class','buttons');
-		// 	.select('.buttonLine')
-		// 	.attr('class','buttons');
-		//
-		// //set up play button
-		// playbutton
-		// 	// .selectAll('.play')
-		// 	.data(buttonData)
-		// 	.enter()
-		// 	.append('button')
-		// 	.attr('transform', 'translate(200,0)')
-		// 	.attr('type', 'button')
-		// 	.attr('name', 'button')
-		// 	.attr('value', 'Play')
-		// 	.text('Play')
-		// 	.on("click", function() {
-		// 		var button = d3.select(this);
-		// 		if (button.text() == "Pause") {
-		// 			// moving = false;
-		// 			// clearInterval(timer);
-		// 			button.text("Play");
-		// 		} else {
-		// 			// moving = true;
-		// 			// timer = setInterval(step, 100);
-		// 			button.text("Pause");
-		// 		}
-		// 	});
+		//define the information related to play button
+		let moving = false;
+		let buttonData = ['play']
+
+		//add a play button
+		let playbutton = d3.select('body')
+			.append('g')
+			.attr('class','buttons');
+
+		//set up play button
+		playbutton
+			.selectAll('.play')
+			.data(buttonData)
+			.enter()
+			.append('button')
+			.attr('transform', 'translate(200,0)')
+			.attr('type', 'button')
+			.attr('name', 'button')
+			.attr('value', 'Play')
+			.text('Play')
+			.on("click", function() {
+				var button = d3.select(this);
+				if (button.text() == "Pause") {
+					// moving = false;
+					// clearInterval(timer);
+					button.text("Play");
+				} else {
+					// moving = true;
+					// timer = setInterval(step, 100);
+					button.text("Pause");
+				}
+			});
 
 		//add svg
 		let svg = d3.select('body').append('svg');
@@ -248,7 +244,7 @@ function drawChart(dataset) {
 		.append('text')
 		.attr("font-family", "impact")
 		.attr("font-size", "80px")
-		.attr('x', 200)
+		.attr('x', 190)
 		.attr('y', 120)
 		.text(1975);
 
@@ -267,6 +263,8 @@ function drawChart(dataset) {
 			return referenceEntity
 		});
 
+	let sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity));
+
 	//add a slider
 	var slider = d3
 		.sliderHorizontal()
@@ -280,9 +278,11 @@ function drawChart(dataset) {
 			yearIndication.text(val);
 			yearSelected = val;
 			let selectedOption = val;
-			let dataFilter = dataset.filter(function(d) {
+
+			let dataFilter = sortMethod.filter(function(d) {
 				return d.Year == selectedOption
 			})
+
 
 			groups.data(dataFilter);
 			d3.selectAll('#country')
@@ -317,6 +317,7 @@ function drawChart(dataset) {
 		.attr('transform', 'translate(500,100)')
 		.call(slider);
 
+
 	//sort function
 	d3.select('select').on('change', function(d) {
 		let selectedOption = d3.select(this).property("value");
@@ -327,15 +328,22 @@ function drawChart(dataset) {
 		let sortedData;
 
 		//slider works
-		if (selectedOption == 'low-high') {
+		if (selectedOption == 'Low-High') {
+			sortMethod = dataset.sort(function(a, b) {
+				return +a.Obesity - +b.Obesity
+			});
 			sortedData = yearFilter.sort(function(a, b) {
 				return +a.Obesity - +b.Obesity
 			})
-		} else if (selectedOption == 'high-low') {
+		} else if (selectedOption == 'High-Low') {
+			sortMethod = dataset.sort(function(a, b) {
+				return -a.Obesity - -b.Obesity
+			})
 			sortedData = yearFilter.sort(function(a, b) {
 				return -a.Obesity - -b.Obesity
 			})
 		} else {
+			sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity))
 			sortedData = yearFilter.sort((a, b) => d3.ascending(a.Entity, b.Entity))
 		}
 
