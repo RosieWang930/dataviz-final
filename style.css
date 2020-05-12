@@ -1,3 +1,29 @@
-.entities{
-  
+body{
+
+}
+
+h1{
+  font-family: 'Abril Fatface', cursive;
+  font-size: 8vmin;
+  margin-bottom: 3vmin;
+}
+
+p{
+  font-family: 'Raleway', sans-serif;
+}
+
+.mainContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 15vw 0 15vw;
+}
+
+.introduction{
+  padding: 0 0 3vh 0;
+  line-height: 1.5em;
+}
+
+.highlight{
+  text-decoration: underline;
 }
