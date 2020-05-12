@@ -7,6 +7,7 @@ d3.csv(url)
 		//add a sort dropdown button
 		let dropdownButton = d3.select('body')
 			.append('select')
+			.attr('class','buttons');
 
 		//define sort types
 		let options = ['A-Z', 'high-low', 'low-high']
@@ -17,6 +18,7 @@ d3.csv(url)
 			.data(options)
 			.enter()
 			.append('option')
+			.attr('transform', 'translate(200,0)')
 			.text(function(d) {
 				return d;
 			})
@@ -31,6 +33,7 @@ d3.csv(url)
 		//add a play button
 		let playbutton = d3.select('body')
 			.append('g')
+			.attr('class','buttons');
 
 		//set up play button
 		playbutton
@@ -38,6 +41,7 @@ d3.csv(url)
 			.data(buttonData)
 			.enter()
 			.append('button')
+			.attr('transform', 'translate(200,0)')
 			.attr('type', 'button')
 			.attr('name', 'button')
 			.attr('value', 'Play')
@@ -72,7 +76,7 @@ function drawChart(dataset) {
 	//set up scales for each entity
 	let xScale = d3.scaleLinear()
 		.domain([0, 10])
-		.range([100, window.innerWidth]);
+		.range([200, window.innerWidth-200]);
 
 	let yScale = d3.scaleLinear()
 		.domain([0, 20])
@@ -85,7 +89,7 @@ function drawChart(dataset) {
 	//set timeline scale
 	let timelineScale = d3.scaleLinear()
 		.domain([1975, 2016])
-		.range([400, window.innerWidth - 100]);
+		.range([500, window.innerWidth - 300]);
 
 	//set default reference entity
 	let referenceData = dataset.filter(function(d) {
@@ -94,7 +98,7 @@ function drawChart(dataset) {
 
 	//draw the reference circles
 	let timelineCircle = d3.select('svg').append('g')
-		.selectAll('.reference')
+		.selectAll('g')
 		.data(referenceData)
 		.enter()
 
@@ -135,8 +139,8 @@ function drawChart(dataset) {
 
 	///main chart///
 	//set up groups which contains the circle and labels
-	let groups = d3.select('svg').append('g')
-		.selectAll('.entities')
+	let groups = d3.select('svg')
+		.selectAll('g')
 		.data(dataset)
 		.enter()
 		.filter(function(d) {
@@ -155,7 +159,6 @@ function drawChart(dataset) {
 		.append('circle')
 		.attr('id', 'country')
 		.attr('fill', '#04B2D9')
-		.attr('opacity',1)
 		.attr('cx', function(d, i) {
 			return xScale(i % 10)
 		})
@@ -241,7 +244,7 @@ function drawChart(dataset) {
 		.append('text')
 		.attr("font-family", "impact")
 		.attr("font-size", "80px")
-		.attr('x', 120)
+		.attr('x', 190)
 		.attr('y', 120)
 		.text(1975);
 
@@ -254,7 +257,7 @@ function drawChart(dataset) {
 		.attr('fill', 'grey')
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "10px")
-		.attr('x', 300)
+		.attr('x', 380)
 		.attr('y', 10)
 		.text(function(d) {
 			return referenceEntity
@@ -267,7 +270,7 @@ function drawChart(dataset) {
 		.max(2016)
 		.step(1)
 		.default(1975)
-		.width(window.innerWidth - 500)
+		.width(window.innerWidth - 800)
 		.displayValue(false)
 		.on('onchange', val => {
 			yearIndication.text(val);
@@ -307,7 +310,7 @@ function drawChart(dataset) {
 		.attr('width', 100)
 		.attr('height', 200)
 		.append('g')
-		.attr('transform', 'translate(400,100)')
+		.attr('transform', 'translate(500,100)')
 		.call(slider);
 
 	//sort function
