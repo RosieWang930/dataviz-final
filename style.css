@@ -46,3 +46,8 @@ p{
   text-align: center;
   border-radius:1.5em;
 }
+
+#label{
+  width: 5em;
+  overflow-wrap: break-word;
+}

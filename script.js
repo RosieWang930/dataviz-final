@@ -80,7 +80,7 @@ function drawChart(dataset) {
 	//set up scales for each entity
 	let xScale = d3.scaleLinear()
 		.domain([0, 10])
-		.range([200, window.innerWidth-200]);
+		.range([200, window.innerWidth-150]);
 
 	let yScale = d3.scaleLinear()
 		.domain([0, 20])
@@ -93,7 +93,7 @@ function drawChart(dataset) {
 	//set timeline scale
 	let timelineScale = d3.scaleLinear()
 		.domain([1975, 2016])
-		.range([500, window.innerWidth - 300]);
+		.range([500, window.innerWidth - 250]);
 
 	//set default reference entity
 	let referenceData = dataset.filter(function(d) {
@@ -248,7 +248,7 @@ function drawChart(dataset) {
 		.append('text')
 		.attr("font-family", "impact")
 		.attr("font-size", "80px")
-		.attr('x', 190)
+		.attr('x', 200)
 		.attr('y', 120)
 		.text(1975);
 
@@ -274,7 +274,7 @@ function drawChart(dataset) {
 		.max(2016)
 		.step(1)
 		.default(1975)
-		.width(window.innerWidth - 800)
+		.width(window.innerWidth - 750)
 		.displayValue(false)
 		.on('onchange', val => {
 			yearIndication.text(val);
