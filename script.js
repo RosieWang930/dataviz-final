@@ -6,8 +6,9 @@ d3.csv(url)
 
 		//add a sort dropdown button
 		let dropdownButton = d3.select('body')
-			.append('select')
-			.attr('class','buttons');
+			// .append('select')
+			// .attr('class','buttons');
+			.select('.selected');
 
 		//define sort types
 		let options = ['A-Z', 'high-low', 'low-high']
@@ -32,15 +33,16 @@ d3.csv(url)
 
 		//add a play button
 		let playbutton = d3.select('body')
-			.append('g')
-			.attr('class','buttons');
+			// .append('g')
+			// .attr('class','buttons');
+			.select('.buttons');
 
 		//set up play button
 		playbutton
-			.selectAll('.play')
+			// .selectAll('.play')
 			.data(buttonData)
 			.enter()
-			.append('button')
+			// .append('button')
 			.attr('transform', 'translate(200,0)')
 			.attr('type', 'button')
 			.attr('name', 'button')

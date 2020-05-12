@@ -31,10 +31,18 @@ p{
 }
 
 .buttons{
-  margin-left: 10vmin;
   border:0.1em solid black;
   background-color: white;
   padding: 5px 20px;
+  text-align: center;
+  border-radius:1.5em;
+}
+
+.selected{
+  border:0.1em solid black;
+  background-color: yellow;
+  height: 23px;
+  padding: 10px 30px;
   text-align: center;
   border-radius:1.5em;
 }
