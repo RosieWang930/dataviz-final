@@ -59,7 +59,7 @@ d3.csv(url)
 		let svg = d3.select('body').append('svg');
 		svg
 			.attr("width", "100%")
-			.attr("height", "400%");
+			.attr("height", "3300px");
 
 		//draw timeline and chart
 		drawChart(dataset);
@@ -94,7 +94,7 @@ function drawChart(dataset) {
 
 	//draw the reference circles
 	let timelineCircle = d3.select('svg').append('g')
-		.selectAll('g')
+		.selectAll('.reference')
 		.data(referenceData)
 		.enter()
 
@@ -135,8 +135,8 @@ function drawChart(dataset) {
 
 	///main chart///
 	//set up groups which contains the circle and labels
-	let groups = d3.select('svg')
-		.selectAll('g')
+	let groups = d3.select('svg').append('g')
+		.selectAll('.entities')
 		.data(dataset)
 		.enter()
 		.filter(function(d) {
@@ -155,6 +155,7 @@ function drawChart(dataset) {
 		.append('circle')
 		.attr('id', 'country')
 		.attr('fill', '#04B2D9')
+		.attr('opacity',1)
 		.attr('cx', function(d, i) {
 			return xScale(i % 10)
 		})
