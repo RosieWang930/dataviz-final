@@ -92,300 +92,309 @@ function drawChart(dataset) {
 		.domain([1975, 2016])
 		.range([500, window.innerWidth - 250]);
 
-	//set default reference entity
-	let referenceData = dataset.filter(function(d) {
-		return d.Entity == 'Global'
-	});
-
-	//draw the reference circles
-	let timelineCircle = d3.select('svg').append('g')
-		.selectAll('g')
-		.data(referenceData)
-		.enter()
-
-	timelineCircle.append('circle')
-		.attr('id', 'referenceCircle')
-		.filter(function(d) {
-			return d.Year % 5 == 0
-		})
-		.attr('fill', '#F29F05')
-		.attr('cx', function(d, i) {
-			return timelineScale(d.Year)
-		})
-		.attr('cy', function(d, i) {
-			return 60
-		})
-		.attr('r', function(d) {
-			return rScale(d.Obesity)
-		})
-
-	//draw labels for the obesity rate
-	timelineCircle.append('text')
-		.attr('id', 'timelineLabel')
-		.filter(function(d) {
-			return d.Year % 5 == 0
-		})
-		.attr('x', function(d, i) {
-			return timelineScale(d.Year) - 10
-		})
-		.attr('y', function(d, i) {
-			return 10
-		})
-		.attr('fill', 'grey')
-		.attr("font-family", "sans-serif")
-		.attr("font-size", "10px")
-		.text(function(d) {
-			return d.Obesity + '%'
-		})
-
-	///main chart///
-	//set up groups which contains the circle and labels
-	let groups = d3.select('svg')
-		.selectAll('g')
-		.data(dataset)
-		.enter()
-		.filter(function(d) {
-			return d.Year == 1976
-		})
-		.append('g')
-		.on('mouseenter', function(row) {
-			return d3.select(this).select('#obesityRate').transition().attr('opacity', 1).delay(10).duration(200) && d3.select(this).select("circle").transition().attr('fill', '#D93829').delay(10).duration(200);
-		}) //display the obesity rate
-		.on('mouseleave', function(row) {
-			return d3.select(this).select('#obesityRate').transition().attr('opacity', 0).delay(10).duration(200) && d3.select(this).select("circle").transition().attr('fill', '#04B2D9').delay(10).duration(200);
+		//set default reference entity
+		let referenceData = dataset.filter(function(d) {
+			return d.Entity == 'Global'
 		});
 
-	//add circles for each entity
-	groups
-		.append('circle')
-		.attr('id', 'country')
-		.attr('fill', '#04B2D9')
-		.attr('cx', function(d, i) {
-			return xScale(i % 10)
-		})
-		.attr('cy', function(d, i) {
-			return yScale(Math.floor(i / 10))
-		})
-		.attr('r', function(d, i) {
-			return rScale(d.Obesity)
-		})
-		.on('click', function(d) {
-			referenceData = dataset.filter(function(a) {
-				return a.Entity == d.Entity
-			});
-			d3.selectAll('#referenceCircle')
-				.data(referenceData)
-				.transition()
-				.filter(function(d) {
-					return d.Year % 5 == 0
-				})
-				.attr('r', function(d) {
-					return rScale(d.Obesity)
-				})
-				.delay(100)
-				.duration(1000);
+		//draw the reference circles
+		let timelineCircle = d3.select('svg').append('g')
+			.selectAll('g')
+			.data(referenceData)
+			.enter()
 
-			d3.selectAll('#timelineLabel')
-				.data(referenceData)
-				.transition()
-				.filter(function(d) {
-					return d.Year % 5 == 0
-				})
-				.text(function(d) {
-					return d.Obesity + '%'
-				})
-				.delay(100)
-				.duration(1000);
-
-			return referenceIndication.text(d.Entity)
-			// return referenceEntity == d.Entity
-		});
-
-
-
-	//add entities' names
-	groups
-		.append('text')
-		.attr('id', 'label')
-		.attr("font-family", "sans-serif")
-		.attr("font-size", "10px")
-		.attr('x', function(d, i) {
-			return xScale(i % 10) - 10
-		})
-		.attr('y', function(d, i) {
-			return yScale(Math.floor(i / 10)) + 50
-		})
-		.text(function(d) {
-			return d.Entity
-		});
-
-
-	//add entities' obesity rate
-	groups
-		.append('text')
-		.attr('id', 'obesityRate')
-		.attr("font-family", "sans-serif")
-		.attr("font-size", "15px")
-		.attr('fill', '#D93829')
-		.attr('x', function(d, i) {
-			return xScale(i % 10) - 10
-		})
-		.attr('y', function(d, i) {
-			return yScale(Math.floor(i / 10)) - 40
-		})
-		.text(function(d) {
-			return d.Obesity + '%'
-		})
-		.attr('opacity', 0);
-
-
-	///Slider///
-	//display the selected year
-	let yearIndication = d3.select('svg')
-		.append('text')
-		.attr("font-family", "impact")
-		.attr("font-size", "80px")
-		.attr('x', 190)
-		.attr('y', 120)
-		.text(1975);
-
-	let yearSelected = 1975;
-
-	//display the reference entity
-	let referenceEntity = 'Global';
-	let referenceIndication = d3.select('svg')
-		.append('text')
-		.attr('fill', 'grey')
-		.attr("font-family", "sans-serif")
-		.attr("font-size", "10px")
-		.attr('x', 380)
-		.attr('y', 10)
-		.text(function(d) {
-			return referenceEntity
-		});
-
-	let sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity));
-
-	//add a slider
-	var slider = d3
-		.sliderHorizontal()
-		.min(1975)
-		.max(2016)
-		.step(1)
-		.default(1975)
-		.width(window.innerWidth - 750)
-		.displayValue(false)
-		.on('onchange', val => {
-			yearIndication.text(val);
-			yearSelected = val;
-			let selectedOption = val;
-
-			let dataFilter = sortMethod.filter(function(d) {
-				return d.Year == selectedOption
+		timelineCircle.append('circle')
+			.attr('id', 'referenceCircle')
+			.filter(function(d) {
+				return d.Year % 5 == 0
 			})
-
-
-			groups.data(dataFilter);
-			d3.selectAll('#country')
-				.data(dataFilter)
-				.transition()
-				.attr('r', function(d) {
-					return rScale(d.Obesity)
-				})
-				.duration(500)
-				.ease(d3.easeBounce);
-
-			d3.selectAll('#label')
-				.data(dataFilter)
-				.text(function(d) {
-					return d.Entity
-				});
-
-			d3.selectAll('#obesityRate')
-				.data(dataFilter)
-				.text(function(d) {
-					return d.Obesity + '%'
-				})
-		});
-
-	//call slider
-	let width = window.innerWidth - 500;
-	d3.select('svg').append('g')
-		.attr('id', 'slider')
-		.attr('width', 100)
-		.attr('height', 200)
-		.append('g')
-		.attr('transform', 'translate(500,100)')
-		.call(slider);
-
-
-	//sort function
-	d3.select('select').on('change', function(d) {
-		let selectedOption = d3.select(this).property("value");
-		let yearFilter = dataset.filter(function(d) {
-			return d.Year == yearSelected
-		})
-
-		let sortedData;
-
-		//slider works
-		if (selectedOption == 'Low-High') {
-			sortMethod = dataset.sort(function(a, b) {
-				return +a.Obesity - +b.Obesity
-			});
-			sortedData = yearFilter.sort(function(a, b) {
-				return +a.Obesity - +b.Obesity
+			.attr('fill', '#F29F05')
+			.attr('cx', function(d, i) {
+				return timelineScale(d.Year)
 			})
-		} else if (selectedOption == 'High-Low') {
-			sortMethod = dataset.sort(function(a, b) {
-				return -a.Obesity - -b.Obesity
+			.attr('cy', function(d, i) {
+				return 60
 			})
-			sortedData = yearFilter.sort(function(a, b) {
-				return -a.Obesity - -b.Obesity
-			})
-		} else {
-			sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity))
-			sortedData = yearFilter.sort((a, b) => d3.ascending(a.Entity, b.Entity))
-		}
-
-		groups.data(sortedData);
-		d3.selectAll('#country')
-			.data(sortedData)
-			.transition()
 			.attr('r', function(d) {
 				return rScale(d.Obesity)
 			})
-			.delay(100)
-			.duration(1000)
-			.ease(d3.easeBounce);
 
-		d3.selectAll('#label')
-			.data(sortedData)
-			.transition()
-			.text(function(d) {
-				return d.Entity
+		//draw labels for the obesity rate
+		timelineCircle.append('text')
+			.attr('id', 'timelineLabel')
+			.filter(function(d) {
+				return d.Year % 5 == 0
 			})
-			.delay(100)
-			.duration(1000);
-
-		d3.selectAll('#obesityRate')
-			.data(sortedData)
+			.attr('x', function(d, i) {
+				return timelineScale(d.Year) - 10
+			})
+			.attr('y', function(d, i) {
+				return 10
+			})
+			.attr('fill', 'grey')
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "10px")
 			.text(function(d) {
 				return d.Obesity + '%'
 			})
 
-	});
+		///main chart///
+		//set up groups which contains the circle and labels
+		let groups = d3.select('svg')
+			.selectAll('g')
+			.data(dataset)
+			.enter()
+			.filter(function(d) {
+				return d.Year == 1976
+			})
+			.append('g')
+			.on('mouseenter', function(row) {
+				return d3.select(this).select('#obesityRate').transition().attr('opacity', 1).delay(10).duration(200) && d3.select(this).select("circle").transition().attr('fill', '#D93829').delay(10).duration(200);
+			}) //display the obesity rate
+			.on('mouseleave', function(row) {
+				return d3.select(this).select('#obesityRate').transition().attr('opacity', 0).delay(10).duration(200) && d3.select(this).select("circle").transition().attr('fill', '#04B2D9').delay(10).duration(200);
+			});
 
-	//exits and removes
-	groups
-		.exit()
-		.remove();
+		let selectSortValue = 0;
+		//add circles for each entity
+		groups
+			.append('circle')
+			.attr('id', 'country')
+			.attr('fill', '#04B2D9')
+			.attr('cx', function(d, i) {
+				return xScale(i % 10)
+			})
+			.attr('cy', function(d, i) {
+				return yScale(Math.floor(i / 10))
+			})
+			.attr('r', function(d, i) {
+				return rScale(d.Obesity)
+			})
+			.on('click', function(d) {
+				referenceData = dataset.filter(function(a) {
+					return a.Entity == d.Entity
+				});
 
-	referenceIndication
-		.exit()
-		.remove();
+			 let clickData = referenceData.sort(function(a, b) {
+					return +a.Year - +b.Year
+				})
 
-	timelineCircle
-		.exit()
-		.remove();
-}
+				d3.selectAll('#referenceCircle')
+					.data(clickData)
+					.transition()
+					.filter(function(d) {
+						return d.Year % 5 == 0
+					})
+					.attr('r', function(d) {
+						return rScale(d.Obesity)
+					})
+					.delay(100)
+					.duration(1000);
+
+				d3.selectAll('#timelineLabel')
+					.data(clickData)
+					.transition()
+					.filter(function(d) {
+						return d.Year % 5 == 0
+					})
+					.text(function(d) {
+						return d.Obesity + '%'
+					})
+					.delay(100)
+					.duration(1000);
+
+				return referenceIndication.text(d.Entity)
+
+			});
+
+
+
+		//add entities' names
+		groups
+			.append('text')
+			.attr('id', 'label')
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "10px")
+			.attr('x', function(d, i) {
+				return xScale(i % 10) - 10
+			})
+			.attr('y', function(d, i) {
+				return yScale(Math.floor(i / 10)) + 50
+			})
+			.text(function(d) {
+				return d.Entity
+			});
+
+
+		//add entities' obesity rate
+		groups
+			.append('text')
+			.attr('id', 'obesityRate')
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "15px")
+			.attr('fill', '#D93829')
+			.attr('x', function(d, i) {
+				return xScale(i % 10) - 10
+			})
+			.attr('y', function(d, i) {
+				return yScale(Math.floor(i / 10)) - 40
+			})
+			.text(function(d) {
+				return d.Obesity + '%'
+			})
+			.attr('opacity', 0);
+
+
+		///Slider///
+		//display the selected year
+		let yearIndication = d3.select('svg')
+			.append('text')
+			.attr("font-family", "impact")
+			.attr("font-size", "80px")
+			.attr('x', 190)
+			.attr('y', 120)
+			.text(1975);
+
+		let yearSelected = 1975;
+
+		//display the reference entity
+		let referenceEntity = 'Global';
+		let referenceIndication = d3.select('svg')
+			.append('text')
+			.attr('fill', 'grey')
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "10px")
+			.attr('x', 380)
+			.attr('y', 10)
+			.text(function(d) {
+				return referenceEntity
+			});
+
+		let sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity));
+
+		//add a slider
+		var slider = d3
+			.sliderHorizontal()
+			.min(1975)
+			.max(2016)
+			.step(1)
+			.default(1975)
+			.width(window.innerWidth - 750)
+			.displayValue(false)
+			.on('onchange', val => {
+				yearIndication.text(val);
+				yearSelected = val;
+				let selectedOption = val;
+
+				let dataFilter = sortMethod.filter(function(d) {
+					return d.Year == selectedOption
+				})
+
+
+				groups.data(dataFilter);
+				d3.selectAll('#country')
+					.data(dataFilter)
+					.transition()
+					.attr('r', function(d) {
+						return rScale(d.Obesity)
+					})
+					.duration(500)
+					.ease(d3.easeBounce);
+
+				d3.selectAll('#label')
+					.data(dataFilter)
+					.text(function(d) {
+						return d.Entity
+					});
+
+				d3.selectAll('#obesityRate')
+					.data(dataFilter)
+					.text(function(d) {
+						return d.Obesity + '%'
+					})
+			});
+
+		//call slider
+		let width = window.innerWidth - 500;
+		d3.select('svg').append('g')
+			.attr('id', 'slider')
+			.attr('width', 100)
+			.attr('height', 200)
+			.append('g')
+			.attr('transform', 'translate(500,100)')
+			.call(slider);
+
+
+		//sort function
+		d3.select('select').on('change', function(d) {
+			let selectedOption = d3.select(this).property("value");
+			let yearFilter = dataset.filter(function(d) {
+				return d.Year == yearSelected
+			})
+
+			let sortedData;
+
+			//slider works
+			if (selectedOption == 'Low-High') {
+				selectSortValue = 0;
+				sortMethod = dataset.sort(function(a, b) {
+					return +a.Obesity - +b.Obesity
+				});
+				sortedData = yearFilter.sort(function(a, b) {
+					return +a.Obesity - +b.Obesity
+				})
+			} else if (selectedOption == 'High-Low') {
+				selectSortValue = 1;
+				sortMethod = dataset.sort(function(a, b) {
+					return +b.Obesity - +a.Obesity
+				})
+				sortedData = yearFilter.sort(function(a, b) {
+					return +b.Obesity - +a.Obesity
+				})
+			} else {
+				selectSortValue = 0;
+				sortMethod = dataset.sort((a, b) => d3.ascending(a.Entity, b.Entity))
+				sortedData = yearFilter.sort((a, b) => d3.ascending(a.Entity, b.Entity))
+			}
+
+			groups.data(sortedData);
+			d3.selectAll('#country')
+				.data(sortedData)
+				.transition()
+				.attr('r', function(d) {
+					return rScale(d.Obesity)
+				})
+				.delay(100)
+				.duration(1000)
+				.ease(d3.easeBounce);
+
+			d3.selectAll('#label')
+				.data(sortedData)
+				.transition()
+				.text(function(d) {
+					return d.Entity
+				})
+				.delay(100)
+				.duration(1000);
+
+			d3.selectAll('#obesityRate')
+				.data(sortedData)
+				.text(function(d) {
+					return d.Obesity + '%'
+				})
+
+		});
+
+		//exits and removes
+		groups
+			.exit()
+			.remove();
+
+		referenceIndication
+			.exit()
+			.remove();
+
+		timelineCircle
+			.exit()
+			.remove();
+	}
