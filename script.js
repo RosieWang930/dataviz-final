@@ -64,10 +64,7 @@ d3.csv(url)
     let svg = d3.select('body').append('svg');
     svg
       .attr("width", "100%")
-      .attr("height", "3300px")
-      .call(d3.zoom().on("zoom", function() {
-        svg.attr("transform", d3.event.transform)
-      }));
+      .attr("height", "3300px");
 
     //draw timeline and chart
     drawChart(dataset);
